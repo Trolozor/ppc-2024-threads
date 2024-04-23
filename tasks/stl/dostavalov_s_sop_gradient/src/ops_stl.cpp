@@ -3,8 +3,8 @@
 #include "stl/dostavalov_s_sop_gradient/include/ops_stl.hpp"
 
 #include <atomic>
-#include <future>
 #include <cmath>
+#include <future>
 #include <random>
 #include <thread>
 #include <vector>
