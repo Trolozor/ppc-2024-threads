@@ -3,14 +3,11 @@
 #include "stl/dostavalov_s_sop_gradient/include/ops_stl.hpp"
 
 #include <atomic>
-#include <thread>
-#include <mutex>
+#include <future>
 #include <cmath>
 #include <random>
+#include <thread>
 #include <vector>
-#include <chrono>
-#include <iostream>
-#include <future>
 
 namespace dostavalov_s_stl {
 std::vector<double> randVector(int size) {
@@ -134,7 +131,6 @@ bool StlSLAYGradient::run() {
   std::vector<double> A_Dir(size, 0.0);
 
   while (true) {
-
     A_Dir.assign(size, 0.0);
 
     for (int i = 0; i < num_threads; ++i) {
