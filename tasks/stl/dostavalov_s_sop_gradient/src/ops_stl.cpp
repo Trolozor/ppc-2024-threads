@@ -37,6 +37,8 @@ std::vector<double> randVector(int size) {
     thread.join();
   }
 
+  threads.clear();
+
   return random_vector;
 }
 
@@ -70,6 +72,8 @@ std::vector<double> randMatrix(int size) {
   for (auto& thread : threads) {
     thread.join();
   }
+
+  threads.clear();
 
   return random_matrix;
 }
@@ -127,11 +131,11 @@ bool StlSLAYGradient::run() {
   int num_threads = std::thread::hardware_concurrency();
   int block_size = size / num_threads;
 
-  std::vector<std::future<void>> futures(num_threads);
   std::vector<double> A_Dir(size, 0.0);
 
   while (true) {
     A_Dir.assign(size, 0.0);
+    std::vector<std::future<void>> futures(num_threads);
 
     for (int i = 0; i < num_threads; ++i) {
       int startRow = i * block_size;
@@ -148,6 +152,8 @@ bool StlSLAYGradient::run() {
     for (auto& future : futures) {
       future.wait();
     }
+
+    futures.clear();
 
     double residual_dot_residual = computeDotProduct(residual, residual);
     double A_Dir_dot_direction = computeDotProduct(A_Dir, direction);
@@ -206,6 +212,8 @@ void StlSLAYGradient::updateResult(std::vector<double>& result, const std::vecto
     future.get();
   }
 
+  futures.clear();
+
   for (int i = 0; i < static_cast<int>(result.size()); ++i) {
     result[i] = atomic_result[i];
   }
@@ -234,6 +242,8 @@ void StlSLAYGradient::updateResidual(std::vector<double>& residual, const std::v
   for (auto& future : futures) {
     future.get();
   }
+
+  futures.clear();
 
   for (int i = 0; i < static_cast<int>(residual.size()); ++i) {
     residual[i] = atomic_residual[i];
@@ -264,6 +274,8 @@ void StlSLAYGradient::updateDirection(std::vector<double>& direction, const std:
     future.get();
   }
 
+  futures.clear();
+
   for (int i = 0; i < static_cast<int>(direction.size()); ++i) {
     direction[i] = atomic_direction[i];
   }
@@ -292,6 +304,8 @@ bool StlSLAYGradient::post_processing() {
   for (auto& thread : threads) {
     thread.join();
   }
+
+  threads.clear();
 
   return true;
 }
@@ -336,6 +350,8 @@ bool check_solution(const std::vector<double>& matrixA, const std::vector<double
       break;
     }
   }
+
+  threads.clear();
 
   return solution_correct;
 }
